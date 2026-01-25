@@ -33,6 +33,14 @@ if not exist "lib\\log4j-core-2.22.1.jar" (
     exit /b 1
 )
 
+REM Controlla commons-io minimo (necessario per Apache POI 5.2.5)
+if not exist "lib\\commons-io-2.13.0.jar" (
+    echo [ERR] commons-io-2.13.0.jar non trovato - Esegui download_libraries.bat
+    echo.
+    pause
+    exit /b 1
+)
+
 REM Estrai le classi
 f:\PAM\.venv\Scripts\python.exe extract_classes.py
 

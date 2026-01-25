@@ -25,8 +25,8 @@ LIBRARIES = [
      "org/apache/poi/poi-ooxml/5.2.5/poi-ooxml-5.2.5.jar"),
     
     # Dipendenze POI
-    ("commons-io-2.11.0.jar",
-     "commons-io/commons-io/2.11.0/commons-io-2.11.0.jar"),
+    ("commons-io-2.13.0.jar",
+     "commons-io/commons-io/2.13.0/commons-io-2.13.0.jar"),
     ("commons-compress-1.24.0.jar",
      "org/apache/commons/commons-compress/1.24.0/commons-compress-1.24.0.jar"),
     ("commons-codec-1.15.jar",
