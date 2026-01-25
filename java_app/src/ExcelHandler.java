@@ -1,7 +1,10 @@
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 /**
@@ -22,16 +25,23 @@ public class ExcelHandler {
         }
         
         System.out.println("[DEBUG ExcelHandler] File esiste, dimensione: " + f.length() + " bytes");
+        System.out.println("[DEBUG ExcelHandler] Permessi - lettura: " + f.canRead() + ", scrittura: " + f.canWrite());
+        System.out.println("[DEBUG ExcelHandler] Ultima modifica: " + new java.util.Date(f.lastModified()));
         
         try {
-            System.out.println("[DEBUG ExcelHandler] Creando FileInputStream...");
-            FileInputStream fis = new FileInputStream(filePath);
-            
-            System.out.println("[DEBUG ExcelHandler] Creando XSSFWorkbook...");
-            this.workbook = new XSSFWorkbook(fis);
-            
-            System.out.println("[DEBUG ExcelHandler] Workbook creato, chiudendo stream...");
-            fis.close();
+            long readStartMs = System.currentTimeMillis();
+            System.out.println("[DEBUG ExcelHandler] Lettura file in memoria...");
+            byte[] fileBytes = java.nio.file.Files.readAllBytes(new File(filePath).toPath());
+            long readElapsedMs = System.currentTimeMillis() - readStartMs;
+            System.out.println("[DEBUG ExcelHandler] Letti " + fileBytes.length + " bytes in " + readElapsedMs + " ms");
+
+            long parseStartMs = System.currentTimeMillis();
+            System.out.println("[DEBUG ExcelHandler] Creando WorkbookFactory...");
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(fileBytes)) {
+                this.workbook = WorkbookFactory.create(bais);
+            }
+            long parseElapsedMs = System.currentTimeMillis() - parseStartMs;
+            System.out.println("[DEBUG ExcelHandler] Workbook creato in " + parseElapsedMs + " ms");
             
             System.out.println("[DEBUG ExcelHandler] Workbook caricato con successo! Sheet totali: " + workbook.getNumberOfSheets());
         } catch (Exception e) {
@@ -213,9 +223,22 @@ public class ExcelHandler {
      */
     public void save() throws IOException {
         System.out.println("[DEBUG ExcelHandler] Salvataggio file: " + excelFilePath);
-        FileOutputStream fos = new FileOutputStream(excelFilePath);
-        workbook.write(fos);
-        fos.close();
+        workbook.setForceFormulaRecalculation(true);
+        Path targetPath = Path.of(excelFilePath);
+        Path parentDir = targetPath.getParent();
+        if (parentDir == null) {
+            throw new IOException("Percorso Excel non valido: " + excelFilePath);
+        }
+        Path tempFile = Files.createTempFile(parentDir, "pam_excel_", ".xlsx");
+        try (FileOutputStream fos = new FileOutputStream(tempFile.toFile())) {
+            workbook.write(fos);
+        }
+        try {
+            Files.move(tempFile, targetPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            Files.deleteIfExists(tempFile);
+            throw new IOException("Impossibile salvare il file Excel. Chiudi il file se è aperto: " + excelFilePath, e);
+        }
         System.out.println("[DEBUG ExcelHandler] File salvato correttamente!");
     }
     
