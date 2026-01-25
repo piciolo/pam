@@ -40,6 +40,12 @@ if not exist "lib\\commons-io-2.13.0.jar" (
     pause
     exit /b 1
 )
+if exist "lib\\commons-io-2.11.0.jar" (
+    echo [ERR] Trovato commons-io-2.11.0.jar (obsoleto). Eliminalo o riesegui download_libraries.bat
+    echo.
+    pause
+    exit /b 1
+)
 
 REM Estrai le classi
 f:\PAM\.venv\Scripts\python.exe extract_classes.py

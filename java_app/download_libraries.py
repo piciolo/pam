@@ -79,6 +79,15 @@ for filename, artifact_path in LIBRARIES:
         print(f"ERRORE: {e}")
         failed.append((filename, str(e)))
 
+# Rimuovi versioni obsolete che possono causare conflitti
+legacy_commons_io = JAR_DIR / "commons-io-2.11.0.jar"
+if legacy_commons_io.exists():
+    try:
+        legacy_commons_io.unlink()
+        print("[CLEAN] Rimosso commons-io-2.11.0.jar (obsoleto)")
+    except Exception as e:
+        print(f"[WARN] Impossibile rimuovere {legacy_commons_io}: {e}")
+
 print("\n" + "="*60)
 print(f"[DONE] {success} librerie scaricate")
 
