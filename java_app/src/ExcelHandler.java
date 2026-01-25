@@ -6,6 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Gestisce la lettura e scrittura dei file Excel
@@ -37,8 +43,20 @@ public class ExcelHandler {
 
             long parseStartMs = System.currentTimeMillis();
             System.out.println("[DEBUG ExcelHandler] Creando WorkbookFactory...");
-            try (ByteArrayInputStream bais = new ByteArrayInputStream(fileBytes)) {
-                this.workbook = WorkbookFactory.create(bais);
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            try {
+                Future<Workbook> future = executor.submit(() -> {
+                    try (ByteArrayInputStream bais = new ByteArrayInputStream(fileBytes)) {
+                        return WorkbookFactory.create(bais);
+                    }
+                });
+                this.workbook = future.get(15, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                throw new IOException("Timeout durante apertura Excel (15s). Il file potrebbe essere corrotto o molto lento da leggere.", e);
+            } catch (ExecutionException e) {
+                throw new IOException("Errore durante parsing Excel: " + e.getCause().getMessage(), e.getCause());
+            } finally {
+                executor.shutdownNow();
             }
             long parseElapsedMs = System.currentTimeMillis() - parseStartMs;
             System.out.println("[DEBUG ExcelHandler] Workbook creato in " + parseElapsedMs + " ms");
