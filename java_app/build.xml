@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="PAM-PDF-to-Excel" default="package" basedir=".">
+    
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="main.class" value="MainWindow"/>
+    
+    <!-- Crea la directory di build -->
+    <target name="init">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${lib.dir}"/>
+    </target>
+    
+    <!-- Scarica le librerie necessarie (opzionale, commentato per ora) -->
+    <target name="download-libs" depends="init">
+        <!-- Apache POI per Excel -->
+        <!-- Apache Commons per dipendenze -->
+    </target>
+    
+    <!-- Compila il codice Java -->
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" 
+               destdir="${build.dir}"
+               classpath="${lib.dir}/*"
+               includeantruntime="false"
+               encoding="UTF-8">
+        </javac>
+    </target>
+    
+    <!-- Crea il JAR -->
+    <target name="package" depends="compile">
+        <jar destfile="${dist.dir}/PAM-PDF-to-Excel.jar"
+             basedir="${build.dir}"
+             manifest="manifest.txt">
+        </jar>
+    </target>
+    
+    <!-- Pulisci -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+    
+</project>
