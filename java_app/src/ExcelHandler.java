@@ -2,6 +2,9 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 /**
@@ -213,9 +216,22 @@ public class ExcelHandler {
      */
     public void save() throws IOException {
         System.out.println("[DEBUG ExcelHandler] Salvataggio file: " + excelFilePath);
-        FileOutputStream fos = new FileOutputStream(excelFilePath);
-        workbook.write(fos);
-        fos.close();
+        workbook.setForceFormulaRecalculation(true);
+        Path targetPath = Path.of(excelFilePath);
+        Path parentDir = targetPath.getParent();
+        if (parentDir == null) {
+            throw new IOException("Percorso Excel non valido: " + excelFilePath);
+        }
+        Path tempFile = Files.createTempFile(parentDir, "pam_excel_", ".xlsx");
+        try (FileOutputStream fos = new FileOutputStream(tempFile.toFile())) {
+            workbook.write(fos);
+        }
+        try {
+            Files.move(tempFile, targetPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            Files.deleteIfExists(tempFile);
+            throw new IOException("Impossibile salvare il file Excel. Chiudi il file se è aperto: " + excelFilePath, e);
+        }
         System.out.println("[DEBUG ExcelHandler] File salvato correttamente!");
     }
     
