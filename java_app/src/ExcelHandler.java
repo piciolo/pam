@@ -1,4 +1,5 @@
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
@@ -25,16 +26,18 @@ public class ExcelHandler {
         }
         
         System.out.println("[DEBUG ExcelHandler] File esiste, dimensione: " + f.length() + " bytes");
+        System.out.println("[DEBUG ExcelHandler] Permessi - lettura: " + f.canRead() + ", scrittura: " + f.canWrite());
+        System.out.println("[DEBUG ExcelHandler] Ultima modifica: " + new java.util.Date(f.lastModified()));
         
         try {
+            long startMs = System.currentTimeMillis();
             System.out.println("[DEBUG ExcelHandler] Creando FileInputStream...");
-            FileInputStream fis = new FileInputStream(filePath);
-            
-            System.out.println("[DEBUG ExcelHandler] Creando XSSFWorkbook...");
-            this.workbook = new XSSFWorkbook(fis);
-            
-            System.out.println("[DEBUG ExcelHandler] Workbook creato, chiudendo stream...");
-            fis.close();
+            try (FileInputStream fis = new FileInputStream(filePath)) {
+                System.out.println("[DEBUG ExcelHandler] Creando WorkbookFactory...");
+                this.workbook = WorkbookFactory.create(fis);
+            }
+            long elapsedMs = System.currentTimeMillis() - startMs;
+            System.out.println("[DEBUG ExcelHandler] Workbook creato in " + elapsedMs + " ms");
             
             System.out.println("[DEBUG ExcelHandler] Workbook caricato con successo! Sheet totali: " + workbook.getNumberOfSheets());
         } catch (Exception e) {
