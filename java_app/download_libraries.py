@@ -9,7 +9,8 @@ import urllib.request
 import shutil
 from pathlib import Path
 
-JAR_DIR = Path("f:/PAM/java_app/lib")
+SCRIPT_DIR = Path(__file__).resolve().parent
+JAR_DIR = SCRIPT_DIR / "lib"
 JAR_DIR.mkdir(parents=True, exist_ok=True)
 
 # Repository Maven
