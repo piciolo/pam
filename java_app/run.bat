@@ -53,6 +53,47 @@ if not exist "lib" (
     echo [OK] Cartella lib trovata >> run_debug.log
 )
 
+REM Controlla che log4j sia presente (necessario per Apache POI 5.x)
+if not exist "lib\\log4j-api-2.22.1.jar" (
+    echo [ERR] log4j-api-2.22.1.jar mancante >> run_debug.log
+    echo [ERR] log4j-api-2.22.1.jar non trovato - Esegui download_libraries.bat
+    echo.
+    echo Per aggiornare le librerie, esegui:
+    echo   download_libraries.bat
+    echo.
+    pause
+    exit /b 1
+)
+if not exist "lib\\log4j-core-2.22.1.jar" (
+    echo [ERR] log4j-core-2.22.1.jar mancante >> run_debug.log
+    echo [ERR] log4j-core-2.22.1.jar non trovato - Esegui download_libraries.bat
+    echo.
+    echo Per aggiornare le librerie, esegui:
+    echo   download_libraries.bat
+    echo.
+    pause
+    exit /b 1
+)
+
+REM Controlla commons-io minimo (necessario per Apache POI 5.2.5)
+if not exist "lib\\commons-io-2.13.0.jar" (
+    echo [ERR] commons-io-2.13.0.jar non trovato - Esegui download_libraries.bat >> run_debug.log
+    echo [ERR] commons-io-2.13.0.jar non trovato - Esegui download_libraries.bat
+    echo.
+    echo Per aggiornare le librerie, esegui:
+    echo   download_libraries.bat
+    echo.
+    pause
+    exit /b 1
+)
+if exist "lib\\commons-io-2.11.0.jar" (
+    echo [ERR] commons-io-2.11.0.jar obsoleto trovato - Rimuovilo o esegui download_libraries.bat >> run_debug.log
+    echo [ERR] commons-io-2.11.0.jar obsoleto trovato - Rimuovilo o esegui download_libraries.bat
+    echo.
+    pause
+    exit /b 1
+)
+
 REM Controlla Java
 echo [LOG] Verificando Java... >> run_debug.log
 java -version >> run_debug.log 2>&1

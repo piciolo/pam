@@ -9,7 +9,8 @@ import urllib.request
 import shutil
 from pathlib import Path
 
-JAR_DIR = Path("f:/PAM/java_app/lib")
+SCRIPT_DIR = Path(__file__).resolve().parent
+JAR_DIR = SCRIPT_DIR / "lib"
 JAR_DIR.mkdir(parents=True, exist_ok=True)
 
 # Repository Maven
@@ -24,8 +25,8 @@ LIBRARIES = [
      "org/apache/poi/poi-ooxml/5.2.5/poi-ooxml-5.2.5.jar"),
     
     # Dipendenze POI
-    ("commons-io-2.11.0.jar",
-     "commons-io/commons-io/2.11.0/commons-io-2.11.0.jar"),
+    ("commons-io-2.13.0.jar",
+     "commons-io/commons-io/2.13.0/commons-io-2.13.0.jar"),
     ("commons-compress-1.24.0.jar",
      "org/apache/commons/commons-compress/1.24.0/commons-compress-1.24.0.jar"),
     ("commons-codec-1.15.jar",
@@ -36,6 +37,10 @@ LIBRARIES = [
      "commons-logging/commons-logging/1.2/commons-logging-1.2.jar"),
     ("commons-math3-3.6.1.jar",
      "org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar"),
+    ("log4j-api-2.22.1.jar",
+     "org/apache/logging/log4j/log4j-api/2.22.1/log4j-api-2.22.1.jar"),
+    ("log4j-core-2.22.1.jar",
+     "org/apache/logging/log4j/log4j-core/2.22.1/log4j-core-2.22.1.jar"),
     
     # XML
     ("xmlbeans-5.1.1.jar",
@@ -73,6 +78,15 @@ for filename, artifact_path in LIBRARIES:
     except Exception as e:
         print(f"ERRORE: {e}")
         failed.append((filename, str(e)))
+
+# Rimuovi versioni obsolete che possono causare conflitti
+legacy_commons_io = JAR_DIR / "commons-io-2.11.0.jar"
+if legacy_commons_io.exists():
+    try:
+        legacy_commons_io.unlink()
+        print("[CLEAN] Rimosso commons-io-2.11.0.jar (obsoleto)")
+    except Exception as e:
+        print(f"[WARN] Impossibile rimuovere {legacy_commons_io}: {e}")
 
 print("\n" + "="*60)
 print(f"[DONE] {success} librerie scaricate")
