@@ -1,6 +1,5 @@
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -30,14 +29,19 @@ public class ExcelHandler {
         System.out.println("[DEBUG ExcelHandler] Ultima modifica: " + new java.util.Date(f.lastModified()));
         
         try {
-            long startMs = System.currentTimeMillis();
-            System.out.println("[DEBUG ExcelHandler] Creando FileInputStream...");
-            try (FileInputStream fis = new FileInputStream(filePath)) {
-                System.out.println("[DEBUG ExcelHandler] Creando WorkbookFactory...");
-                this.workbook = WorkbookFactory.create(fis);
+            long readStartMs = System.currentTimeMillis();
+            System.out.println("[DEBUG ExcelHandler] Lettura file in memoria...");
+            byte[] fileBytes = java.nio.file.Files.readAllBytes(new File(filePath).toPath());
+            long readElapsedMs = System.currentTimeMillis() - readStartMs;
+            System.out.println("[DEBUG ExcelHandler] Letti " + fileBytes.length + " bytes in " + readElapsedMs + " ms");
+
+            long parseStartMs = System.currentTimeMillis();
+            System.out.println("[DEBUG ExcelHandler] Creando WorkbookFactory...");
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(fileBytes)) {
+                this.workbook = WorkbookFactory.create(bais);
             }
-            long elapsedMs = System.currentTimeMillis() - startMs;
-            System.out.println("[DEBUG ExcelHandler] Workbook creato in " + elapsedMs + " ms");
+            long parseElapsedMs = System.currentTimeMillis() - parseStartMs;
+            System.out.println("[DEBUG ExcelHandler] Workbook creato in " + parseElapsedMs + " ms");
             
             System.out.println("[DEBUG ExcelHandler] Workbook caricato con successo! Sheet totali: " + workbook.getNumberOfSheets());
         } catch (Exception e) {
