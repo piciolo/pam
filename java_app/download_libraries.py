@@ -9,7 +9,8 @@ import urllib.request
 import shutil
 from pathlib import Path
 
-JAR_DIR = Path("f:/PAM/java_app/lib")
+SCRIPT_DIR = Path(__file__).resolve().parent
+JAR_DIR = SCRIPT_DIR / "lib"
 JAR_DIR.mkdir(parents=True, exist_ok=True)
 
 # Repository Maven
@@ -36,6 +37,10 @@ LIBRARIES = [
      "commons-logging/commons-logging/1.2/commons-logging-1.2.jar"),
     ("commons-math3-3.6.1.jar",
      "org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar"),
+    ("log4j-api-2.22.1.jar",
+     "org/apache/logging/log4j/log4j-api/2.22.1/log4j-api-2.22.1.jar"),
+    ("log4j-core-2.22.1.jar",
+     "org/apache/logging/log4j/log4j-core/2.22.1/log4j-core-2.22.1.jar"),
     
     # XML
     ("xmlbeans-5.1.1.jar",

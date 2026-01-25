@@ -19,6 +19,20 @@ cd /d "%~dp0"
 echo [INFO] Cartella: %cd%
 echo [INFO] Estraendo classi...
 
+REM Controlla che log4j sia presente (necessario per Apache POI 5.x)
+if not exist "lib\\log4j-api-2.22.1.jar" (
+    echo [ERR] log4j-api-2.22.1.jar non trovato - Esegui download_libraries.bat
+    echo.
+    pause
+    exit /b 1
+)
+if not exist "lib\\log4j-core-2.22.1.jar" (
+    echo [ERR] log4j-core-2.22.1.jar non trovato - Esegui download_libraries.bat
+    echo.
+    pause
+    exit /b 1
+)
+
 REM Estrai le classi
 f:\PAM\.venv\Scripts\python.exe extract_classes.py
 
