@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema base: usiamo un tema Material3 senza ActionBar; l'UI è interamente Compose. -->
+    <style name="Theme.CartelliPAM" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/pam_red</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+</resources>
