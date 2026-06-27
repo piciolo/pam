@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- PDF generati per condivisione/stampa -->
+    <cache-path name="cartelli_cache" path="cartelli/" />
+    <files-path name="cartelli_files" path="cartelli/" />
+    <!-- Scatti della fotocamera -->
+    <cache-path name="photos_cache" path="photos/" />
+</paths>
